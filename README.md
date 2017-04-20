@@ -9,6 +9,6 @@ This R package contains personal helper functions which should reduce redundant 
 
 Listed below are the collection of implemented functions. It will be categorized.
 
-### Fromating
+### Formatting
 
 - `formatGermanNumber()` - This method converts a number like 123.546.789,09 into 123456789.09
