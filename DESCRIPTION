@@ -1,0 +1,12 @@
+Package: wagnertimoR
+Type: Package
+Title: This is a personal package with helper functions
+Version: 0.1.0
+Author: Timo Wagner
+Maintainer: The package maintainer <wagnertimo@gmx.de>
+Description: This package should reduce redundand use of functions.
+    
+License: MIT
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
