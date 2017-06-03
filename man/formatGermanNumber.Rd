@@ -12,6 +12,9 @@ formatGermanNumber(x)
 \value{
 the converted input number with only a point as decimal delimiter. E.g. 123546789.09
 }
+\description{
+This function formats a 'german' style number into a classical (scientific) format with only a point as decimal delimiter.
+}
 \examples{
 singlePointNumber <- formatGermanNumber("123.456.789,09")
 
