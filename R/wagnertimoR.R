@@ -179,3 +179,39 @@ cseq <- function(from, to, by){
 
 
 
+
+
+
+
+#' @title join_left_fill
+#'
+#' @description This function proceeds a left join (dplyr packages) and fills missing values of the 'by variable' with a given value (instead of the default NA).
+#' Importantly, the other valid NA values are preserved.
+#' NOTE: dplyr and tidyr package are needed!
+#'
+#' @param x - a 'german' number in the format like e.g. 123.456.789,09
+#'
+#' @return the converted input number with only a point as decimal delimiter. E.g. 123546789.09
+#'
+#' @examples
+#' singlePointNumber <- join_left_fill("123.456.789,09")
+#'
+#' @export
+#'
+left_join_fill <- function(x, y, by, fill = 0){
+  z <- left_join(x, y, by = by)
+  # Get the 'new' variables/row which were created by the joined to only set their NA values to the fill value
+  tmp <- setdiff(names(z), names(x))
+  z <- replace_na(z, setNames(as.list(rep(fill, length(tmp))), tmp))
+  z
+}
+
+
+
+
+
+
+
+
+
+
