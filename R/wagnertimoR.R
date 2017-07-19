@@ -186,29 +186,41 @@ cseq <- function(from, to, by){
 #' @title join_left_fill
 #'
 #' @description This function proceeds a left join (dplyr packages) and fills missing values of the 'by variable' with a given value (instead of the default NA).
-#' Importantly, the other valid NA values are preserved.
+#' Importantly, the other valid NA values are preserved. BUT only for the data.frame on the left side!
 #' NOTE: dplyr and tidyr package are needed!
 #'
-#' @param x - a 'german' number in the format like e.g. 123.456.789,09
+#' @param x - the left data.frame where the NAs are perserved
+#' @param y - the right data.frame wherre NA values can occur due to the join. CAUTION valid NAs get also replaced by the fill value!
+#' @param by - the by variable to join the data.frames
+#' @param fill - custom fill value to replace the default NA in dplyrs join function
 #'
-#' @return the converted input number with only a point as decimal delimiter. E.g. 123546789.09
+#' @return the joined data.frame with filled 0 values
 #'
 #' @examples
-#' singlePointNumber <- join_left_fill("123.456.789,09")
+#' dt1 <- data.table(x=c('a', 'b', 'c', 'd', 'e'), y=c(NA, 'w', NA, 'y', 'z'));
+#' dt2 <- data.table(x=c('a', 'b', 'c'), new_col=c(1,2,3));
+#'
+#' left_join_fill(dt1, dt2, by = x, fill = 0)
+#'
+#' #  x    y new_col
+#' #1 a <NA>       1
+#' #2 b    w       2
+#' #3 c <NA>       3
+#' #4 d    y       0
+#' #5 e    z       0
 #'
 #' @export
 #'
 left_join_fill <- function(x, y, by, fill = 0){
+  library(dplyr)
+  library(tidyr)
+
   z <- left_join(x, y, by = by)
   # Get the 'new' variables/row which were created by the joined to only set their NA values to the fill value
   tmp <- setdiff(names(z), names(x))
   z <- replace_na(z, setNames(as.list(rep(fill, length(tmp))), tmp))
   z
 }
-
-
-
-
 
 
 
