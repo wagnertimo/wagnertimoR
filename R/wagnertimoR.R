@@ -273,4 +273,46 @@ filterDataDynamically = function(df, controls) {
 
 
 
+#' @title subsetDynamic
+#'
+#' @description THis function subsets a a given data frame (df1) by specific columns on the values of the comparing data frame (df2).
+#' So both data frames have to have those columns. Comparing operater is "==".
+#'
+#' @param df1 is the main data frame which has to be subsetted
+#' @param df2 is the comparing data.frame
+#' @param cols are the column names to compare, which have to occur in both data frames
+#'
+#' @return the data frame df1 subsetted by the values in df2
+#'
+#' @examples
+#'
+#' # create example data
+#' df1 = data.frame(
+#'  x=sample(1:3, 100L, TRUE),
+#'  y=runif(100L, 1, 5),
+#'  z=sample(c('A', 'B', 'C'), 100L, TRUE)
+#' )
+#'
+#' df2 = data.frame(
+#'  x=sample(1:3, 100L, TRUE),
+#'  z=sample(c('A', 'B', 'C'), 100L, TRUE)
+#' )
+#'
+#' # df1
+#' # df2
+#' subsetDynamic(df1, df2, c("x","z"))
+#'
+#'
+#'
+#' @export
+#'
+subsetDynamic <- function(df1, df2, cols) {
+
+  for(i in 1:length(cols)) {
+
+    df1 = df1[df1[, cols[i]] == df2[, cols[i]],]
+  }
+
+  df1
+}
 
