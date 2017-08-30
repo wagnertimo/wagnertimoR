@@ -225,5 +225,52 @@ left_join_fill <- function(x, y, by, fill = 0){
 
 
 
+#' @title filterDataDynamically
+#'
+#' @description Filter a data frame dynamically based on a list of predicates, specified in the form column = list(binary_operator, rhs) (e.g. x = list(`<=`, 3) for x <= 3).
+#'
+#' @param df data frame to filter
+#' @param controls list of filters (with optional operators)
+#'
+#' @return the filtered data.frame
+#'
+#' @examples
+#'
+#' # create example data
+#' df = data.frame(
+#'  x=sample(1:3, 100L, TRUE),
+#'  y=runif(100L, 1, 5),
+#'  z=sample(c('A', 'B', 'C'), 100L, TRUE)
+#' )
+#'
+#' controls = list(x=2L, y=list(`<=`, 2.5), z=list(`!=`, 'C'))
+#' filter_data(df, controls)
+#'
+#' @export
+#'
+filterDataDynamically = function(df, controls) {
+
+  evaluate = function(predicate, value) {
+    if (is.list(predicate)) {
+      operator = predicate[[1L]]
+      rhs = predicate[[2L]]
+    } else {
+      operator = `==`
+      rhs = predicate
+    }
+    return(operator(value, rhs))
+  }
+
+  index = apply(
+    mapply(evaluate, predicate=controls, value=df[names(controls)]), 1L, all
+  )
+
+  return(df[index, ])
+
+}
+
+
+
+
 
 
