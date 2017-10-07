@@ -316,3 +316,83 @@ subsetDynamic <- function(df1, df2, cols) {
   df1
 }
 
+
+
+
+
+#' @title renameColsIndexedByName
+#'
+#' @description This function renames a vector of given column names. It can be used within a pipeline of dplyr operations.
+#' It can not rename columns by given indices. Therefore @seealso renameColsIndexedByIndex
+#'
+#' @param dat is the data.frame with the old column names
+#' @param oldnames specifies a string vector of the old column names which has to be renamed
+#' @param newnames the names of the replacing strings in a vector. Note that the order matters!
+#'
+#' @return the input data.frame with the new column names
+#'
+#' @examples
+#'
+#' # create example data
+#' df1 = data.frame(
+#'  x=sample(1:3, 100L, TRUE),
+#'  y=runif(100L, 1, 5),
+#'  z=sample(c('A', 'B', 'C'), 100L, TRUE)
+#' )
+#'
+#' head(renameColsIndexedByName(df1, c("x", "y"), c("xnew", "ynew")))
+#'
+#'
+#'
+#' @export
+#'
+renameColsIndexedByName <- function(dat, oldnames, newnames) {
+  datnames <- colnames(dat)
+  datnames[which(datnames %in% oldnames)] <- newnames
+  colnames(dat) <- datnames
+  dat
+}
+
+
+
+
+
+
+#' @title renameColsIndexedByIndex
+#'
+#' @description This function renames a vector of given column indices It can be used within a pipeline of dplyr operations.
+#' It can not rename columns by given indices. Therefore @seealso renameColsIndexedByName
+#'
+#' @param dat is the data.frame with the old column names
+#' @param indexOfoldnames specifies a integer vector which contain the old column names
+#' @param newnames the names of the replacing strings in a vector. Note that the order matters!
+#'
+#' @return the input data.frame with the new column names
+#'
+#' @examples
+#'
+#' # create example data
+#' df1 = data.frame(
+#'  x=sample(1:3, 100L, TRUE),
+#'  y=runif(100L, 1, 5),
+#'  z=sample(c('A', 'B', 'C'), 100L, TRUE)
+#' )
+#'
+#' head(renameColsIndexedByIndex(df1, c(1, 2), c("xnew", "ynew")))
+#'
+#'
+#'
+#' @export
+#'
+renameColsIndexedByIndex <- function(dat, indexOfoldnames, newnames) {
+  datnames <- colnames(dat)
+  datnames[indexOfoldnames] <- newnames
+  colnames(dat) <- datnames
+  dat
+}
+
+
+
+
+
+
