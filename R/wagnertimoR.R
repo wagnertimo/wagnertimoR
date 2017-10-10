@@ -396,3 +396,93 @@ renameColsIndexedByIndex <- function(dat, indexOfoldnames, newnames) {
 
 
 
+#' @title plotHistSkewnessAndTransOfVar
+#'
+#' @description This function plots a histogram of a given variable in a dataset with its skewness value and it plots the transformed (Yeo transformation) data.
+#' The function needs ggplot2, grid.arrange and the caret packages.
+#'
+#' @param Data is the data.frame
+#' @param variable character name of a column/variable in the Data data.frame which histogram and transformed histogram has to be plotted
+#'
+#' @return a grid.arrange plot with the histogram of the original variable and the (Yeo) transformed data
+#'
+#' @examples
+#'
+#'
+#'
+#'
+#' @export
+#'
+
+plotHistSkewnessAndTransOfVar <- function(Data, variable) {
+
+
+  skew = round(skewness(Data[,variable]),2)
+
+  # Histogram
+  g1 = ggplot(Data) +
+    geom_histogram(aes_string(variable), color = "black", fill = "darkblue") +
+    labs(y = "Anzahl an Beobachtungen") +
+    annotate("label", x = max(Data[,variable])/2, y = 500, label = paste("Schiefe:", skew), color = "black", size = 6) +
+    theme_bw() +
+    theme(plot.margin=unit(c(0.5,1,0.5,0.5),"cm")) +
+    theme(panel.grid.minor.x = element_blank()) +
+    theme(panel.grid.minor.y = element_blank()) +
+    theme(axis.text.x = element_text(color = "black", size = 16)) +
+    theme(axis.text.y = element_text(color = "black", size = 16)) +
+    theme(axis.title.x = element_text(face = "bold", color = "#007749", size = 16)) +
+    theme(axis.title.y = element_text(face = "bold", color = "#007749", size = 16)) +
+    theme(legend.title = element_text(face = "bold", color = "#007749", size = 12))
+
+
+  # Box-Cox Transformation --> lambda estimation ///// TransformedValue = [OriginalValue^lambda - 1] / lambda
+  #
+  #
+  # NOTE: Box-Cox Transformation cant accomplish negative values --> use Yeo-Johnson transformation "YeoJohnson"
+  #summary(Data$RenewableVsFossilRatio_lag_6)
+
+  # you have to add a random second variable --> only numeric vars are allowed and not the selected one
+  nums = sapply(Data, is.numeric)
+  nums = names(Data[,nums])[names(Data[,nums]) != variable]
+  # new data frame with the requested variable and a random numeric variable to calc the transformation
+  dat = Data[, c(nums[length(nums)], variable)]
+
+  t = preProcess(dat, method = c("center", "scale", "YeoJohnson"))
+  lambda = round(as.numeric(t$yj[[variable]]$lambda), 2)
+  # Get the transformed values with predict method
+
+
+  t = predict(t, dat)
+  #head(t)
+  skew = round(skewness(t[,variable]),2)
+
+
+  #   # Histogram
+  g2 = ggplot(t) +
+    #geom_histogram(aes(ENTSOE_Generation_Forecast_WindOffshore_Netzregelverbund), color = "black", fill = "darkblue") +
+    #geom_histogram(aes(ENTSOE_Load_Error_Sum_Netzregelverbund_lag_6), color = "black", fill = "darkblue") +
+    #geom_histogram(aes(ENTSOE_Load_Forecast_Sum_Netzregelverbund), color = "black", fill = "darkblue") +
+    #geom_histogram(aes(EPEX_DayAhead_BasePrice), color = "black", fill = "darkblue") +
+    #geom_histogram(aes(EPEX_DayAhead_BaseVolume), color = "black", fill = "darkblue") +
+    geom_histogram(aes_string(variable), color = "black", fill = "darkblue") +
+    #geom_vline(xintercept = 1, color = "black") +
+    labs(y = "Anzahl an Beobachtungen") +
+    annotate("label", x = 2, y = 200, label = paste("Schiefe: ", skew, "\nLambda: ", lambda, sep = ""), color = "black", size = 6) +
+    theme_bw() +
+    theme(plot.margin=unit(c(0.5,1,0.5,0.5),"cm")) +
+    theme(panel.grid.minor.x = element_blank()) +
+    theme(panel.grid.minor.y = element_blank()) +
+    theme(axis.text.x = element_text(color = "black", size = 16)) +
+    theme(axis.text.y = element_text(color = "black", size = 16)) +
+    theme(axis.title.x = element_text(face = "bold", color = "#007749", size = 16)) +
+    theme(axis.title.y = element_text(face = "bold", color = "#007749", size = 16)) +
+    theme(legend.title = element_text(face = "bold", color = "#007749", size = 12))
+
+
+  grid.arrange(g1, g2, ncol = 2)
+  #g2
+
+}
+
+
+
